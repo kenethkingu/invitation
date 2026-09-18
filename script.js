@@ -48,11 +48,8 @@ const clickCaptions = [
 ];
 
 function getCaption(list, count) {
-    const index = count - 1;
-    if (index < list.length) {
-        return list[index];
-    }
-    return list[list.length - 1]; // Reuse the last one
+    const index = (count - 1) % list.length;
+    return list[index];
 }
 
 function scaleYesButton() {
