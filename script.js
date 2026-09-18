@@ -84,6 +84,9 @@ function flee(pointerX, pointerY, rect) {
         noBtn.classList.add('fixed');
         isFixed = true;
         
+        // Move the button to the body so it escapes the backdrop-filter containing block
+        document.body.appendChild(noBtn);
+        
         noBtn.offsetHeight; // Force reflow
         noBtn.style.transition = ''; // Restore CSS transitions
         
