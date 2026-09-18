@@ -11,7 +11,7 @@
     --accent-hover: #F2C39B;
     
     --font-heading: 'Cormorant Garamond', serif;
-    --font-body: 'Inter', sans-serif;
+    --font-body: 'Work Sans', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -84,9 +84,28 @@ body {
     padding: 48px 32px;
     text-align: center;
     box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+/* Screens */
+.screen {
+    transition: opacity 0.35s ease;
+}
+
+.screen.fade-out {
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* Typography */
+.pre-headline {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
 .headline {
     font-family: var(--font-heading);
     font-size: 3rem;
@@ -123,18 +142,11 @@ body {
 }
 
 .reply-text {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 400;
     color: var(--text-primary);
     margin-top: 24px;
     font-style: italic;
-}
-
-.attempt-counter {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin-top: 32px;
-    opacity: 0.6;
 }
 
 /* Buttons */
@@ -165,7 +177,6 @@ body {
 .btn-primary {
     background: var(--text-primary);
     color: var(--bg-start);
-    /* Transform transition for scale */
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, color 0.2s;
 }
 
@@ -178,9 +189,8 @@ body {
     background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
     border: 1px solid var(--card-border);
-    /* cubic-bezier bounce for fleeing */
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative; /* Before going fixed */
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
 }
 
 .btn-secondary:hover {
@@ -190,6 +200,109 @@ body {
 .btn-secondary.fixed {
     position: fixed;
     z-index: 100;
+}
+
+/* Reveal Screen */
+.reveal-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 32px;
+}
+
+.pulsing-heart {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin-bottom: 24px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.pulsing-heart.active {
+    opacity: 1;
+    transform: scale(1);
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pulsing-heart.active {
+        animation: none;
+    }
+}
+
+.reveal-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reveal-line {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-style: italic;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-line.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Particles */
+.particles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    bottom: -20px;
+    font-size: 1.2rem;
+    opacity: 0;
+    user-select: none;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(var(--drift)) rotate(var(--rot));
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .particles-container {
+        display: none;
+    }
 }
 
 /* Responsive */
@@ -204,5 +317,9 @@ body {
     
     .subtitle {
         font-size: 1rem;
+    }
+    
+    .reveal-line {
+        font-size: 1.3rem;
     }
 }

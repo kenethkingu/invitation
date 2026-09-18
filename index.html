@@ -7,28 +7,41 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="ambient-glow"></div>
+    <div id="particlesContainer" class="particles-container"></div>
     
     <main class="container">
         <div class="card" id="mainCard">
-            <h1 class="headline">Can we go <em>out</em> sometime?</h1>
-            <p class="subtitle">no big plan, no pressure — just missed you.</p>
-            
-            <p class="caption" id="captionText" aria-live="polite"></p>
-            
-            <div class="button-group" id="buttonGroup">
-                <button id="yesBtn" class="btn btn-primary">Yes</button>
-                <button id="noBtn" class="btn btn-secondary">No</button>
+            <!-- Ask Screen -->
+            <div id="askScreen" class="screen">
+                <p class="pre-headline">a question, not a text</p>
+                <h1 class="headline">Can we go <em>out</em> sometime?</h1>
+                <p class="subtitle">no big plan, no pressure. just missed you.</p>
+                
+                <p class="caption" id="captionText" aria-live="polite"></p>
+                
+                <div class="button-group" id="buttonGroup">
+                    <button id="yesBtn" class="btn btn-primary">Yes</button>
+                    <button id="noBtn" class="btn btn-secondary">No</button>
+                </div>
+                
+                <p class="reply-text" id="replyText" aria-live="polite" hidden></p>
             </div>
             
-            <p class="reply-text" id="replyText" aria-live="polite" hidden></p>
-            
-            <p class="attempt-counter" id="attemptCounter" hidden>attempts: <span id="attemptCount">0</span></p>
+            <!-- Reveal Screen -->
+            <div id="revealScreen" class="screen reveal-screen" hidden>
+                <div class="pulsing-heart">🤍</div>
+                <div class="reveal-lines">
+                    <p class="reveal-line line-1">Then it's a date.</p>
+                    <p class="reveal-line line-2">I've missed you more than I let on.</p>
+                    <p class="reveal-line line-3">I'll text you when and where.</p>
+                </div>
+            </div>
         </div>
     </main>
 

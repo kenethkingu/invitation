@@ -1,21 +1,23 @@
 const noBtn = document.getElementById('noBtn');
 const yesBtn = document.getElementById('yesBtn');
 const captionText = document.getElementById('captionText');
-const attemptCounter = document.getElementById('attemptCounter');
-const attemptCountSpan = document.getElementById('attemptCount');
 const replyText = document.getElementById('replyText');
 const buttonGroup = document.getElementById('buttonGroup');
+const askScreen = document.getElementById('askScreen');
+const revealScreen = document.getElementById('revealScreen');
+const particlesContainer = document.getElementById('particlesContainer');
 
 let attempts = 0;
 let isFixed = false;
 let yesScale = 1;
 
 const captions = [
-    "nice try.",
-    "not today.",
-    "you'll have to be quicker than that.",
-    "still missing you, by the way.",
-    "at this point just say yes."
+    "not yet.",
+    "you will have to catch me first.",
+    "I am not going anywhere though.",
+    "still hoping you mean yes.",
+    "okay, you could just say yes.",
+    "I will wait as long as it takes."
 ];
 
 function getCaption(index) {
@@ -42,10 +44,7 @@ function handleDodge(pointerX, pointerY) {
 }
 
 function flee(pointerX, pointerY, rect) {
-    // Increment attempts
     attempts++;
-    attemptCountSpan.textContent = attempts;
-    attemptCounter.removeAttribute('hidden');
     
     // Update caption
     captionText.textContent = getCaption(attempts - 1);
@@ -59,21 +58,25 @@ function flee(pointerX, pointerY, rect) {
 
     // Switch to fixed positioning on first flee to detach from document flow
     if (!isFixed) {
-        // Lock in current dimensions to avoid layout jumping
         const startWidth = rect.width;
         const startHeight = rect.height;
         noBtn.style.width = `${startWidth}px`;
         noBtn.style.height = `${startHeight}px`;
         
-        // Set initial fixed position to current on-screen location
+        // Disable transitions temporarily so it doesn't animate from 'auto'
+        noBtn.style.transition = 'none';
+        
         noBtn.style.left = `${rect.left}px`;
         noBtn.style.top = `${rect.top}px`;
         
-        // Need a tiny delay before adding the 'fixed' class so CSS transition works properly for the next move, 
-        // but 'fixed' class itself sets position: fixed. 
-        // Actually, setting inline left/top with position:fixed immediately is fine.
         noBtn.classList.add('fixed');
         isFixed = true;
+        
+        // Force reflow
+        noBtn.offsetHeight;
+        
+        // Restore CSS transitions
+        noBtn.style.transition = '';
         
         // Re-read rect now that it's fixed
         rect = noBtn.getBoundingClientRect();
@@ -91,7 +94,7 @@ function flee(pointerX, pointerY, rect) {
         dy = Math.random() - 0.5;
     }
 
-    // Normalize vector
+    // Normalize vector (away from pointer)
     const length = Math.sqrt(dx * dx + dy * dy);
     const nx = dx / length;
     const ny = dy / length;
@@ -99,9 +102,9 @@ function flee(pointerX, pointerY, rect) {
     // Distance to move (150-180px)
     const moveDist = 150 + Math.random() * 30;
     
-    // Add random wobble (-30 to +30)
-    const wobbleX = (Math.random() - 0.5) * 60;
-    const wobbleY = (Math.random() - 0.5) * 60;
+    // Add random wobble (±40px)
+    const wobbleX = (Math.random() - 0.5) * 80;
+    const wobbleY = (Math.random() - 0.5) * 80;
     
     let targetX = rect.left + (nx * moveDist) + wobbleX;
     let targetY = rect.top + (ny * moveDist) + wobbleY;
@@ -120,12 +123,11 @@ function flee(pointerX, pointerY, rect) {
 
 // Mouse trigger
 document.addEventListener('mousemove', (e) => {
-    // Only dodge if the buttons are still active
     if (noBtn.disabled) return;
     handleDodge(e.clientX, e.clientY);
 });
 
-// Mobile touch trigger on the button itself (before a tap registers)
+// Mobile touch trigger on the button itself
 noBtn.addEventListener('touchstart', (e) => {
     if (noBtn.disabled) return;
     e.preventDefault(); // Prevent click from firing
@@ -134,30 +136,98 @@ noBtn.addEventListener('touchstart', (e) => {
     handleDodge(touch.clientX, touch.clientY);
 }, { passive: false });
 
-function disableButtons() {
+function spawnParticles() {
+    // Respect prefers-reduced-motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
+
+    const particleIcons = ['🤍', '🩶', '✨'];
+    const particleCount = 16;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random icon
+        particle.textContent = particleIcons[Math.floor(Math.random() * particleIcons.length)];
+        
+        // Random start position along the bottom (0 to 100vw)
+        particle.style.left = `${Math.random() * 100}vw`;
+        
+        // Random animation duration (4-5s)
+        const duration = 4 + Math.random() * 1;
+        // Random delay (0-1.5s staggered)
+        const delay = Math.random() * 1.5;
+        
+        // Random drift (-50vw to 50vw)
+        const drift = (Math.random() - 0.5) * 50;
+        particle.style.setProperty('--drift', `${drift}vw`);
+        
+        // Random rotation (-180deg to 180deg)
+        const rot = (Math.random() - 0.5) * 360;
+        particle.style.setProperty('--rot', `${rot}deg`);
+        
+        particle.style.animation = `floatUp ${duration}s ease-in ${delay}s forwards`;
+        
+        particlesContainer.appendChild(particle);
+    }
+}
+
+function startYesReveal() {
     yesBtn.disabled = true;
     noBtn.disabled = true;
     
+    // Hide NO button if it's currently floating out of flow
+    if (isFixed) {
+        noBtn.style.display = 'none';
+    }
+    
+    // Fade out ask screen
+    askScreen.classList.add('fade-out');
+    
+    setTimeout(() => {
+        askScreen.setAttribute('hidden', '');
+        revealScreen.removeAttribute('hidden');
+        
+        // Start animations
+        const pulsingHeart = revealScreen.querySelector('.pulsing-heart');
+        pulsingHeart.classList.add('active');
+        
+        const lines = revealScreen.querySelectorAll('.reveal-line');
+        lines.forEach((line, index) => {
+            setTimeout(() => {
+                line.classList.add('active');
+            }, 300 * (index + 1)); // staggered 0.3s apart
+        });
+        
+        // Spawn floating particles
+        spawnParticles();
+        
+    }, 350);
+}
+
+// Click / Keyboard activation
+yesBtn.addEventListener('click', () => {
+    startYesReveal();
+});
+
+noBtn.addEventListener('click', (e) => {
+    // Only accept keyboard clicks (where detail is 0). If it's a mouse/pointer click, ignore it.
+    if (e.detail !== 0) {
+        return;
+    }
+    
+    // Real "No" via keyboard
+    yesBtn.disabled = true;
+    noBtn.disabled = true;
     yesBtn.style.opacity = '0.5';
     noBtn.style.opacity = '0.5';
     yesBtn.style.cursor = 'default';
     noBtn.style.cursor = 'default';
     
-    // Stop ambient interactions
     captionText.classList.remove('visible');
-    setTimeout(() => { captionText.style.display = 'none'; }, 300);
-}
-
-// Click / Keyboard activation
-yesBtn.addEventListener('click', () => {
-    disableButtons();
-    replyText.textContent = "good — I'll text you the details 🤍";
-    replyText.removeAttribute('hidden');
-});
-
-noBtn.addEventListener('click', () => {
-    // If the user managed to click it (e.g. via keyboard tabbing + space/enter)
-    disableButtons();
-    replyText.textContent = "fair enough. I still miss you though.";
+    
+    replyText.textContent = "that is alright. I am still glad I asked.";
     replyText.removeAttribute('hidden');
 });
