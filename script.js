@@ -142,14 +142,14 @@ document.addEventListener('mousemove', (e) => {
     handleDodge(e.clientX, e.clientY);
 });
 
-// Mobile touch trigger on the button itself
-noBtn.addEventListener('touchstart', (e) => {
+// Mobile touch trigger on the document
+function handleTouch(e) {
     if (noBtn.disabled) return;
-    e.preventDefault(); // Prevent click from firing
-    
     const touch = e.touches[0];
     handleDodge(touch.clientX, touch.clientY);
-}, { passive: false });
+}
+document.addEventListener('touchstart', handleTouch, { passive: true });
+document.addEventListener('touchmove', handleTouch, { passive: true });
 
 function spawnParticles() {
     // Respect prefers-reduced-motion
@@ -227,13 +227,8 @@ yesBtn.addEventListener('click', () => {
     startYesReveal();
 });
 
-noBtn.addEventListener('click', (e) => {
-    // Only accept keyboard clicks (where detail is 0). If it's a mouse/pointer click, ignore it.
-    if (e.detail !== 0) {
-        return;
-    }
-    
-    // Real "No" via keyboard
+noBtn.addEventListener('click', () => {
+    // With pointer-events: none in CSS, this is only reachable via keyboard (Tab + Enter/Space)
     yesBtn.disabled = true;
     noBtn.disabled = true;
     yesBtn.style.opacity = '0.5';
