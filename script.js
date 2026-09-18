@@ -37,8 +37,8 @@ function handleDodge(pointerX, pointerY) {
     const dy = btnCenterY - pointerY;
     const distance = Math.sqrt(dx * dx + dy * dy);
     
-    // If pointer is within 90px of button center, flee!
-    if (distance < 90) {
+    // If pointer is within 110px of button center, flee!
+    if (distance < 110) {
         flee(pointerX, pointerY, rect);
     }
 }
@@ -87,35 +87,50 @@ function flee(pointerX, pointerY, rect) {
     
     let dx = btnCenterX - pointerX;
     let dy = btnCenterY - pointerY;
-    
-    // If exact center, pick random direction
-    if (dx === 0 && dy === 0) {
-        dx = Math.random() - 0.5;
-        dy = Math.random() - 0.5;
-    }
+    const distanceToCenter = Math.sqrt(dx * dx + dy * dy);
 
-    // Normalize vector (away from pointer)
-    const length = Math.sqrt(dx * dx + dy * dy);
-    const nx = dx / length;
-    const ny = dy / length;
-    
-    // Distance to move (150-180px)
-    const moveDist = 150 + Math.random() * 30;
-    
-    // Add random wobble (±40px)
-    const wobbleX = (Math.random() - 0.5) * 80;
-    const wobbleY = (Math.random() - 0.5) * 80;
-    
-    let targetX = rect.left + (nx * moveDist) + wobbleX;
-    let targetY = rect.top + (ny * moveDist) + wobbleY;
-    
-    // Clamp to viewport with margin
+    let targetX, targetY;
     const margin = 20;
     const maxX = window.innerWidth - rect.width - margin;
     const maxY = window.innerHeight - rect.height - margin;
-    
-    targetX = Math.max(margin, Math.min(targetX, maxX));
-    targetY = Math.max(margin, Math.min(targetY, maxY));
+
+    // Fallback: jump to the farthest corner
+    const jumpToFarthestCorner = () => {
+        targetX = (pointerX > window.innerWidth / 2) ? margin : maxX;
+        targetY = (pointerY > window.innerHeight / 2) ? margin : maxY;
+    };
+
+    if (distanceToCenter < 6) {
+        // Bug 1: Dead-center approach
+        jumpToFarthestCorner();
+    } else {
+        // Normalize vector (away from pointer)
+        const nx = dx / distanceToCenter;
+        const ny = dy / distanceToCenter;
+        
+        // Distance to move (150-180px)
+        const moveDist = 150 + Math.random() * 30;
+        
+        // Add random wobble (±40px)
+        const wobbleX = (Math.random() - 0.5) * 80;
+        const wobbleY = (Math.random() - 0.5) * 80;
+        
+        targetX = rect.left + (nx * moveDist) + wobbleX;
+        targetY = rect.top + (ny * moveDist) + wobbleY;
+        
+        // Clamp to viewport
+        targetX = Math.max(margin, Math.min(targetX, maxX));
+        targetY = Math.max(margin, Math.min(targetY, maxY));
+        
+        // Bug 2: Corner/edge trap check
+        const clampedCenterX = targetX + rect.width / 2;
+        const clampedCenterY = targetY + rect.height / 2;
+        const distBackToPointer = Math.sqrt(Math.pow(clampedCenterX - pointerX, 2) + Math.pow(clampedCenterY - pointerY, 2));
+        
+        if (distBackToPointer < 110) {
+            jumpToFarthestCorner();
+        }
+    }
     
     noBtn.style.left = `${targetX}px`;
     noBtn.style.top = `${targetY}px`;
