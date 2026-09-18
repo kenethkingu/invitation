@@ -35,7 +35,29 @@ const dodgeCaptions = [
     "the yes button is right there.",
     "still no luck.",
     "I believe in you.",
-    "take a deep breath and try again."
+    "take a deep breath and try again.",
+    "wow, you are really committed.",
+    "maybe try using your other hand.",
+    "is this your first time using a phone.",
+    "I could do this forever.",
+    "do not give up now.",
+    "the yes button is looking awfully lonely.",
+    "just tap yes, it is so much easier.",
+    "I am actually impressed.",
+    "are we going to be here all night.",
+    "I thought you were faster than this.",
+    "come on, put some effort into it.",
+    "you are making me dizzy.",
+    "I am not even tired.",
+    "the anticipation is killing me.",
+    "you know you want to say yes.",
+    "this is good exercise for your fingers.",
+    "I admire your stamina.",
+    "at this rate we will never go out.",
+    "just give in.",
+    "okay, seriously, just click yes.",
+    "I am starting to feel bad for you.",
+    "one more try, I promise I will not move."
 ];
 
 const clickCaptions = [
