@@ -17,7 +17,25 @@ const dodgeCaptions = [
     "I am not going anywhere though.",
     "still hoping you mean yes.",
     "okay, you could just say yes.",
-    "I will wait as long as it takes."
+    "I will wait as long as it takes.",
+    "are you even trying.",
+    "almost had it that time.",
+    "a little to the left.",
+    "too slow.",
+    "this is getting embarrassing.",
+    "I have all day.",
+    "just click yes already.",
+    "you are very persistent.",
+    "I admire the dedication.",
+    "we could have been on a date by now.",
+    "do you need some help.",
+    "maybe use two hands.",
+    "I am rooting for you.",
+    "okay now you are just playing.",
+    "the yes button is right there.",
+    "still no luck.",
+    "I believe in you.",
+    "take a deep breath and try again."
 ];
 
 const clickCaptions = [
