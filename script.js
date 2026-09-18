@@ -101,7 +101,8 @@ function flee(pointerX, pointerY, rect) {
     const distanceToCenter = Math.sqrt(dx * dx + dy * dy);
 
     let targetX, targetY;
-    const margin = 20;
+    const isMobile = window.innerWidth < 480;
+    const margin = isMobile ? 10 : 20;
     const maxX = window.innerWidth - rect.width - margin;
     const maxY = window.innerHeight - rect.height - margin;
 
@@ -116,10 +117,12 @@ function flee(pointerX, pointerY, rect) {
         const nx = dx / distanceToCenter;
         const ny = dy / distanceToCenter;
         
-        const moveDist = 150 + Math.random() * 30;
+        const jumpBase = isMobile ? 90 : 150;
+        const moveDist = jumpBase + Math.random() * 30;
         
-        const wobbleX = (Math.random() - 0.5) * 80;
-        const wobbleY = (Math.random() - 0.5) * 80;
+        const wobbleMag = isMobile ? 40 : 80;
+        const wobbleX = (Math.random() - 0.5) * wobbleMag;
+        const wobbleY = (Math.random() - 0.5) * wobbleMag;
         
         targetX = rect.left + (nx * moveDist) + wobbleX;
         targetY = rect.top + (ny * moveDist) + wobbleY;
@@ -168,13 +171,15 @@ function spawnParticles() {
         particle.className = 'particle';
         
         particle.textContent = particleIcons[Math.floor(Math.random() * particleIcons.length)];
-        particle.style.left = `${Math.random() * 100}vw`;
+        const maxLeft = Math.max(0, window.innerWidth - 40);
+        particle.style.left = `${Math.random() * maxLeft}px`;
         
         const duration = 4 + Math.random() * 1;
         const delay = Math.random() * 1.5;
         
-        const drift = (Math.random() - 0.5) * 50;
-        particle.style.setProperty('--drift', `${drift}vw`);
+        const maxDrift = Math.min(window.innerWidth / 3, 100);
+        const drift = (Math.random() - 0.5) * maxDrift * 2;
+        particle.style.setProperty('--drift', `${drift}px`);
         
         const rot = (Math.random() - 0.5) * 360;
         particle.style.setProperty('--rot', `${rot}deg`);

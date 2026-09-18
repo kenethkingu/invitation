@@ -28,6 +28,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 [hidden] {
@@ -38,13 +39,13 @@ body {
     font-family: var(--font-body);
     background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
     color: var(--text-primary);
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden; /* Prevent scrolling when button flees */
     position: relative;
-    padding: 20px;
+    padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
 }
 
 /* Ambient Glow */
@@ -112,7 +113,7 @@ body {
 
 .headline {
     font-family: var(--font-heading);
-    font-size: 3rem;
+    font-size: clamp(2.5rem, 8vw, 3rem);
     font-weight: 400;
     line-height: 1.1;
     margin-bottom: 16px;
@@ -124,7 +125,7 @@ body {
 }
 
 .subtitle {
-    font-size: 1.05rem;
+    font-size: clamp(1rem, 4vw, 1.05rem);
     font-weight: 300;
     color: var(--text-secondary);
     margin-bottom: 40px;
@@ -167,6 +168,11 @@ body {
     font-size: 1rem;
     font-weight: 500;
     padding: 12px 32px;
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 8px;
     border: none;
     cursor: pointer;
@@ -248,7 +254,7 @@ body {
 
 .reveal-line {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
+    font-size: clamp(1.3rem, 5vw, 1.5rem);
     font-style: italic;
     opacity: 0;
     transform: translateY(15px);
@@ -303,21 +309,9 @@ body {
     }
 }
 
-/* Responsive */
+/* Responsive container padding */
 @media (max-width: 480px) {
     .card {
         padding: 40px 24px;
-    }
-    
-    .headline {
-        font-size: 2.5rem;
-    }
-    
-    .subtitle {
-        font-size: 1rem;
-    }
-    
-    .reveal-line {
-        font-size: 1.3rem;
     }
 }
