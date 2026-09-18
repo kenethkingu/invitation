@@ -6,19 +6,8 @@ const askScreen = document.getElementById('askScreen');
 const revealScreen = document.getElementById('revealScreen');
 const particlesContainer = document.getElementById('particlesContainer');
 
-let dodgeAttempts = 0;
 let clickAttempts = 0;
-let isFixed = false;
 let yesScale = 1;
-
-const dodgeCaptions = [
-    "not yet.",
-    "you will have to catch me first.",
-    "I am not going anywhere though.",
-    "still hoping you mean yes.",
-    "okay, you could just say yes.",
-    "I will wait as long as it takes."
-];
 
 const clickCaptions = [
     "not going to happen.",
@@ -43,114 +32,6 @@ function scaleYesButton() {
         yesBtn.style.transform = `scale(${Math.min(yesScale, 1.6)})`;
     }
 }
-
-function handleDodge(pointerX, pointerY) {
-    const rect = noBtn.getBoundingClientRect();
-    const btnCenterX = rect.left + rect.width / 2;
-    const btnCenterY = rect.top + rect.height / 2;
-    
-    // Calculate distance from pointer to button center
-    const dx = btnCenterX - pointerX;
-    const dy = btnCenterY - pointerY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    
-    // If pointer is within 110px of button center, flee!
-    if (distance < 110) {
-        flee(pointerX, pointerY, rect);
-    }
-}
-
-function flee(pointerX, pointerY, rect) {
-    dodgeAttempts++;
-    
-    // Update caption
-    captionText.textContent = getCaption(dodgeCaptions, dodgeAttempts);
-    captionText.classList.add('visible');
-    
-    scaleYesButton();
-
-    // Switch to fixed positioning on first flee to detach from document flow
-    if (!isFixed) {
-        const startWidth = rect.width;
-        const startHeight = rect.height;
-        noBtn.style.width = `${startWidth}px`;
-        noBtn.style.height = `${startHeight}px`;
-        
-        noBtn.style.transition = 'none';
-        
-        noBtn.style.left = `${rect.left}px`;
-        noBtn.style.top = `${rect.top}px`;
-        
-        noBtn.classList.add('fixed');
-        isFixed = true;
-        
-        noBtn.offsetHeight; // Force reflow
-        noBtn.style.transition = ''; // Restore CSS transitions
-        
-        rect = noBtn.getBoundingClientRect();
-    }
-
-    const btnCenterX = rect.left + rect.width / 2;
-    const btnCenterY = rect.top + rect.height / 2;
-    
-    let dx = btnCenterX - pointerX;
-    let dy = btnCenterY - pointerY;
-    const distanceToCenter = Math.sqrt(dx * dx + dy * dy);
-
-    let targetX, targetY;
-    const margin = 20;
-    const maxX = window.innerWidth - rect.width - margin;
-    const maxY = window.innerHeight - rect.height - margin;
-
-    const jumpToFarthestCorner = () => {
-        targetX = (pointerX > window.innerWidth / 2) ? margin : maxX;
-        targetY = (pointerY > window.innerHeight / 2) ? margin : maxY;
-    };
-
-    if (distanceToCenter < 6) {
-        jumpToFarthestCorner();
-    } else {
-        const nx = dx / distanceToCenter;
-        const ny = dy / distanceToCenter;
-        
-        const moveDist = 150 + Math.random() * 30;
-        
-        const wobbleX = (Math.random() - 0.5) * 80;
-        const wobbleY = (Math.random() - 0.5) * 80;
-        
-        targetX = rect.left + (nx * moveDist) + wobbleX;
-        targetY = rect.top + (ny * moveDist) + wobbleY;
-        
-        targetX = Math.max(margin, Math.min(targetX, maxX));
-        targetY = Math.max(margin, Math.min(targetY, maxY));
-        
-        const clampedCenterX = targetX + rect.width / 2;
-        const clampedCenterY = targetY + rect.height / 2;
-        const distBackToPointer = Math.sqrt(Math.pow(clampedCenterX - pointerX, 2) + Math.pow(clampedCenterY - pointerY, 2));
-        
-        if (distBackToPointer < 110) {
-            jumpToFarthestCorner();
-        }
-    }
-    
-    noBtn.style.left = `${targetX}px`;
-    noBtn.style.top = `${targetY}px`;
-}
-
-// Mouse trigger
-document.addEventListener('mousemove', (e) => {
-    if (noBtn.disabled) return;
-    handleDodge(e.clientX, e.clientY);
-});
-
-// Mobile touch trigger on the document
-function handleTouch(e) {
-    if (noBtn.disabled) return;
-    const touch = e.touches[0];
-    handleDodge(touch.clientX, touch.clientY);
-}
-document.addEventListener('touchstart', handleTouch, { passive: true });
-document.addEventListener('touchmove', handleTouch, { passive: true });
 
 function spawnParticles() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -183,12 +64,7 @@ function spawnParticles() {
 
 function startYesReveal() {
     yesBtn.disabled = true;
-    noBtn.disabled = true;
-    
-    if (isFixed) {
-        noBtn.style.display = 'none';
-    }
-    
+    // Fade out ask screen
     askScreen.classList.add('fade-out');
     
     setTimeout(() => {
