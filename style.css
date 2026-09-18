@@ -1,0 +1,208 @@
+:root {
+    --bg-start: #2A1B38; /* Deep plum/indigo */
+    --bg-end: #C47A74;   /* Warm rose/terracotta */
+    
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --card-border: rgba(255, 255, 255, 0.15);
+    --text-primary: #fdfbf7;
+    --text-secondary: rgba(253, 251, 247, 0.7);
+    
+    --accent: #E5A97D; /* Warm gold/peach */
+    --accent-hover: #F2C39B;
+    
+    --font-heading: 'Cormorant Garamond', serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-start: #1A0F24;
+        --bg-end: #8A4F4A;
+        --card-bg: rgba(0, 0, 0, 0.2);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --text-secondary: rgba(253, 251, 247, 0.6);
+    }
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Prevent scrolling when button flees */
+    position: relative;
+    padding: 20px;
+}
+
+/* Ambient Glow */
+.ambient-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(229, 169, 125, 0.15) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: drift 18s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(10%, 15%) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ambient-glow {
+        animation: none;
+    }
+}
+
+/* Container & Card */
+.container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 500px;
+}
+
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 48px 32px;
+    text-align: center;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+}
+
+/* Typography */
+.headline {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 16px;
+}
+
+.headline em {
+    font-style: italic;
+    color: var(--accent);
+}
+
+.subtitle {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    line-height: 1.5;
+}
+
+.caption {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--accent);
+    min-height: 20px;
+    margin-bottom: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.caption.visible {
+    opacity: 1;
+}
+
+.reply-text {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-top: 24px;
+    font-style: italic;
+}
+
+.attempt-counter {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 32px;
+    opacity: 0.6;
+}
+
+/* Buttons */
+.button-group {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    min-height: 50px;
+}
+
+.btn {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 12px 32px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.btn:focus-visible {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5), 0 0 0 5px var(--accent);
+}
+
+.btn-primary {
+    background: var(--text-primary);
+    color: var(--bg-start);
+    /* Transform transition for scale */
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, color 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--accent);
+    box-shadow: 0 4px 16px rgba(229, 169, 125, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+    /* cubic-bezier bounce for fleeing */
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative; /* Before going fixed */
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-secondary.fixed {
+    position: fixed;
+    z-index: 100;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .card {
+        padding: 40px 24px;
+    }
+    
+    .headline {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+}
