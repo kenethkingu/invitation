@@ -78,8 +78,17 @@ function flee(pointerX, pointerY, rect) {
         
         noBtn.style.transition = 'none';
         
-        noBtn.style.left = `${rect.left}px`;
-        noBtn.style.top = `${rect.top}px`;
+        // Ensure the initial starting position is strictly clamped within the viewport
+        const initialClientWidth = document.documentElement.clientWidth;
+        const initialClientHeight = document.documentElement.clientHeight;
+        const initialMaxX = initialClientWidth - startWidth - 10;
+        const initialMaxY = initialClientHeight - startHeight - 10;
+        
+        const clampedStartX = Math.max(10, Math.min(rect.left, initialMaxX));
+        const clampedStartY = Math.max(10, Math.min(rect.top, initialMaxY));
+        
+        noBtn.style.left = `${clampedStartX}px`;
+        noBtn.style.top = `${clampedStartY}px`;
         
         noBtn.classList.add('fixed');
         isFixed = true;
@@ -101,14 +110,17 @@ function flee(pointerX, pointerY, rect) {
     const distanceToCenter = Math.sqrt(dx * dx + dy * dy);
 
     let targetX, targetY;
-    const isMobile = window.innerWidth < 480;
+    const clientWidth = document.documentElement.clientWidth;
+    const clientHeight = document.documentElement.clientHeight;
+    
+    const isMobile = clientWidth < 480;
     const margin = isMobile ? 10 : 20;
-    const maxX = window.innerWidth - rect.width - margin;
-    const maxY = window.innerHeight - rect.height - margin;
+    const maxX = clientWidth - rect.width - margin;
+    const maxY = clientHeight - rect.height - margin;
 
     const jumpToFarthestCorner = () => {
-        targetX = (pointerX > window.innerWidth / 2) ? margin : maxX;
-        targetY = (pointerY > window.innerHeight / 2) ? margin : maxY;
+        targetX = (pointerX > clientWidth / 2) ? margin : maxX;
+        targetY = (pointerY > clientHeight / 2) ? margin : maxY;
     };
 
     if (distanceToCenter < 6) {
@@ -171,13 +183,14 @@ function spawnParticles() {
         particle.className = 'particle';
         
         particle.textContent = particleIcons[Math.floor(Math.random() * particleIcons.length)];
-        const maxLeft = Math.max(0, window.innerWidth - 40);
+        const clientWidth = document.documentElement.clientWidth;
+        const maxLeft = Math.max(0, clientWidth - 40);
         particle.style.left = `${Math.random() * maxLeft}px`;
         
         const duration = 4 + Math.random() * 1;
         const delay = Math.random() * 1.5;
         
-        const maxDrift = Math.min(window.innerWidth / 3, 100);
+        const maxDrift = Math.min(clientWidth / 3, 100);
         const drift = (Math.random() - 0.5) * maxDrift * 2;
         particle.style.setProperty('--drift', `${drift}px`);
         
